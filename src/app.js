@@ -114,7 +114,7 @@ const contractABI = [
       "type": "function"
     }
   ];
-const contractAddress = "0x7704278270ac5f0d7db809f7cecd58cb218a5846"; // Your contract address here
+const contractAddress = "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab"; // Your contract address here
 
 // Declare contract after initializing web3
 let contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -172,8 +172,12 @@ async function verifyProfile() {
         await contract.methods.verifyProfile(address).send({ from: userAccount });
         alert("Profile verified successfully!");
     } catch (error) {
-        console.error("Error verifying profile:", error);
-        alert("Error verifying profile. Check the console for details.");
+        if (error.message.includes("Profile is already verified")) {
+            alert("This profile is already verified!");
+        } else {
+            console.error("Error verifying profile:", error);
+            alert("Error verifying profile. Check the console for details.");
+        }
     }
 }
 

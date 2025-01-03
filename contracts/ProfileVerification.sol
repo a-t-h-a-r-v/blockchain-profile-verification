@@ -6,7 +6,8 @@ contract ProfileVerification {
     mapping(address => bool) public verified;
     
     event ProfileCreated(address user, string hashedProfile);
-    
+    event ProfileVerified(address user);
+
     // Function to store user profile data (name and email)
     function createProfile(string memory name, string memory email) public {
         // Hash the name and email to save in the contract (or store them directly)
@@ -23,6 +24,8 @@ contract ProfileVerification {
     // Function to verify the profile
     function verifyProfile(address user) public {
         require(bytes(profiles[user]).length > 0, "Profile does not exist");
+        require(!verified[user], "Profile is already verified"); // New check
         verified[user] = true;
+        emit ProfileVerified(user); // Emit an event for successful verification
     }
 }
