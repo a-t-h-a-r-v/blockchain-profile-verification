@@ -23,6 +23,19 @@ const contractABI = [
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "ProfileVerified",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
@@ -101,20 +114,20 @@ const contractABI = [
       "constant": true
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "user",
-          "type": "address"
-        }
-      ],
-      "name": "verifyProfile",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "email",
+                "type": "string"
+            }
+        ],
+        "name": "verifyProfile",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
     }
   ];
-const contractAddress = "0xe78a0f7e598cc8b0bb87894b0f60dd2a88d6a8ab"; // Your contract address here
+const contractAddress = "0xde74d11fcb38f4eec05efb50992af937eb88c484"; // Your contract address here
 
 // Declare contract after initializing web3
 let contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -153,27 +166,23 @@ async function createProfile() {
 
 // Verify Profile function
 async function verifyProfile() {
-    const address = document.getElementById("address").value;
+    const email = document.getElementById("email").value;
 
     // Validate input
-    if (!address) {
-        alert("Please enter a user address!");
+    if (!email) {
+        alert("Please enter an email!");
         return;
     }
 
     try {
-        // Ensure the address is valid
-        if (!web3.utils.isAddress(address)) {
-            alert("Invalid Ethereum address!");
-            return;
-        }
-
-        // Call verifyProfile function from the contract
-        await contract.methods.verifyProfile(address).send({ from: userAccount });
+        // Call the updated verifyProfile function
+        await contract.methods.verifyProfile(email).send({ from: userAccount });
         alert("Profile verified successfully!");
     } catch (error) {
         if (error.message.includes("Profile is already verified")) {
             alert("This profile is already verified!");
+        } else if (error.message.includes("Profile with this email does not exist")) {
+            alert("No profile found with this email!");
         } else {
             console.error("Error verifying profile:", error);
             alert("Error verifying profile. Check the console for details.");
